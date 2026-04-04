@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Times New Roman", Times, serif; font-size: 12px; color: #1a1a1a; background: #fff; padding: 40px; }
+  .name { font-size: 26px; font-weight: bold; text-align: center; text-transform: uppercase; letter-spacing: 3px; }
+  .profession { text-align: center; font-size: 13px; color: #555; margin-top: 4px; font-style: italic; }
+  .contact-row { text-align: center; margin: 10px 0; font-size: 11px; color: #444; }
+  .contact-row span { margin: 0 8px; }
+  .divider { border: none; border-top: 2px solid #1a1a1a; margin: 12px 0; }
+  .thin-divider { border: none; border-top: 1px solid #999; margin: 8px 0; }
+  .section { margin-bottom: 18px; }
+  .section-title { font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  .exp-item, .edu-item { margin-bottom: 12px; }
+  .exp-row { display: flex; justify-content: space-between; }
+  .exp-title { font-weight: bold; font-size: 12px; }
+  .exp-subtitle { font-style: italic; font-size: 11px; color: #444; margin-top: 2px; }
+  .exp-date { font-size: 11px; color: #555; }
+  .exp-desc { font-size: 11px; color: #333; margin-top: 4px; line-height: 1.6; }
+  .skills-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-tag { font-size: 11px; padding: 2px 8px; border: 1px solid #333; }
+  .lang-row { display: flex; gap: 20px; flex-wrap: wrap; }
+  .lang-item { font-size: 11px; }
+  .lang-level { color: #555; }
+  .cert-item { margin-bottom: 6px; font-size: 11px; }
+  .summary-text { font-size: 11px; line-height: 1.7; color: #333; font-style: italic; }
+</style>
+</head>
+<body>
+  <div class="name">{{ cv.first_name }} {{ cv.last_name }}</div>
+  {% if cv.profession %}<div class="profession">{{ cv.profession }}</div>{% endif %}
+  <div class="contact-row">
+    {% if cv.email %}<span>{{ cv.email }}</span>{% endif %}
+    {% if cv.phone %}<span>{{ cv.phone }}</span>{% endif %}
+    {% if cv.address %}<span>{{ cv.address }}</span>{% endif %}
+    {% if cv.linkedin %}<span>{{ cv.linkedin }}</span>{% endif %}
+    {% if cv.github %}<span>{{ cv.github }}</span>{% endif %}
+    {% if cv.website %}<span>{{ cv.website }}</span>{% endif %}
+  </div>
+  <hr class="divider">
+
+  {% if cv.summary %}
+  <div class="section">
+    <div class="section-title">Qisqacha Ma'lumot</div>
+    <hr class="thin-divider">
+    <p class="summary-text">{{ cv.summary }}</p>
+  </div>
+  {% endif %}
+
+  {% if cv.experiences.all %}
+  <div class="section">
+    <div class="section-title">Ish Tajribasi</div>
+    <hr class="thin-divider">
+    {% for exp in cv.experiences.all %}
+    <div class="exp-item">
+      <div class="exp-row">
+        <div>
+          <div class="exp-title">{{ exp.position }}</div>
+          <div class="exp-subtitle">{{ exp.company }}{% if exp.location %}, {{ exp.location }}{% endif %}</div>
+        </div>
+        <div class="exp-date">{{ exp.start_date }} – {% if exp.is_current %}Hozir{% else %}{{ exp.end_date }}{% endif %}</div>
+      </div>
+      {% if exp.description %}<p class="exp-desc">{{ exp.description }}</p>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if cv.educations.all %}
+  <div class="section">
+    <div class="section-title">Ta'lim</div>
+    <hr class="thin-divider">
+    {% for edu in cv.educations.all %}
+    <div class="edu-item">
+      <div class="exp-row">
+        <div>
+          <div class="exp-title">{{ edu.degree }}{% if edu.field %} – {{ edu.field }}{% endif %}</div>
+          <div class="exp-subtitle">{{ edu.institution }}{% if edu.gpa %} · GPA: {{ edu.gpa }}{% endif %}</div>
+        </div>
+        <div class="exp-date">{{ edu.start_date }} – {% if edu.is_current %}Hozir{% else %}{{ edu.end_date }}{% endif %}</div>
+      </div>
+      {% if edu.description %}<p class="exp-desc">{{ edu.description }}</p>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if cv.skills.all %}
+  <div class="section">
+    <div class="section-title">Ko'nikmalar</div>
+    <hr class="thin-divider">
+    <div class="skills-grid">
+      {% for skill in cv.skills.all %}
+      <span class="skill-tag">{{ skill.name }}</span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if cv.languages.all %}
+  <div class="section">
+    <div class="section-title">Tillar</div>
+    <hr class="thin-divider">
+    <div class="lang-row">
+      {% for lang in cv.languages.all %}
+      <span class="lang-item">{{ lang.name }} – <span class="lang-level">{{ lang.level }}</span></span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if cv.certificates.all %}
+  <div class="section">
+    <div class="section-title">Sertifikatlar</div>
+    <hr class="thin-divider">
+    {% for cert in cv.certificates.all %}
+    <div class="cert-item">
+      <strong>{{ cert.name }}</strong>{% if cert.issuer %} – {{ cert.issuer }}{% endif %}{% if cert.date %} ({{ cert.date }}){% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</body>
+</html>

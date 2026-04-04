@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; font-size: 12px; color: #222; background: #fff; }
+  .top-bar { background: #7c3aed; height: 8px; }
+  .header { padding: 30px 40px 20px; display: flex; align-items: flex-start; gap: 20px; border-bottom: 1px solid #e2e8f0; }
+  .avatar-placeholder { width: 70px; height: 70px; background: #7c3aed; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold; flex-shrink: 0; }
+  .header-info { flex: 1; }
+  .header-info h1 { font-size: 24px; color: #1e1b4b; }
+  .header-info .profession { color: #7c3aed; font-size: 14px; margin-top: 3px; font-weight: 600; }
+  .contacts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+  .contact-chip { font-size: 10px; background: #f5f3ff; color: #5b21b6; padding: 3px 10px; border-radius: 20px; }
+  .content { display: flex; padding: 0; }
+  .main { flex: 1; padding: 25px 30px; }
+  .sidebar { width: 220px; background: #faf5ff; padding: 20px 18px; }
+  .section { margin-bottom: 22px; }
+  .section-title { font-size: 12px; font-weight: bold; color: #7c3aed; text-transform: uppercase;
+    letter-spacing: 1.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: #ddd8fe; }
+  .timeline-item { position: relative; padding-left: 16px; margin-bottom: 14px; }
+  .timeline-item::before { content: ''; position: absolute; left: 0; top: 5px; width: 8px; height: 8px; background: #7c3aed; border-radius: 50%; }
+  .timeline-item::after { content: ''; position: absolute; left: 3px; top: 13px; width: 2px; height: calc(100% - 8px); background: #ddd8fe; }
+  .item-title { font-size: 13px; font-weight: bold; color: #1e1b4b; }
+  .item-subtitle { font-size: 11px; color: #7c3aed; margin-top: 2px; }
+  .item-date { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+  .item-desc { font-size: 11px; color: #475569; margin-top: 4px; line-height: 1.5; }
+  .skill-item { margin-bottom: 9px; }
+  .skill-header { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; }
+  .skill-dots { display: flex; gap: 3px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #ddd8fe; }
+  .dot.filled { background: #7c3aed; }
+  .lang-item { margin-bottom: 8px; }
+  .lang-name { font-size: 12px; font-weight: bold; }
+  .lang-level { font-size: 10px; color: #7c3aed; }
+  .cert-item { margin-bottom: 8px; }
+  .cert-name { font-size: 11px; font-weight: bold; }
+  .cert-info { font-size: 10px; color: #64748b; }
+  .summary-text { font-size: 11px; color: #475569; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="top-bar"></div>
+
+<div class="header">
+  <div class="avatar-placeholder">
+    {{ cv.first_name|slice:":1" }}{{ cv.last_name|slice:":1" }}
+  </div>
+  <div class="header-info">
+    <h1>{{ cv.first_name }} {{ cv.last_name }}</h1>
+    {% if cv.profession %}<div class="profession">{{ cv.profession }}</div>{% endif %}
+    <div class="contacts">
+      {% if cv.email %}<span class="contact-chip">✉ {{ cv.email }}</span>{% endif %}
+      {% if cv.phone %}<span class="contact-chip">☎ {{ cv.phone }}</span>{% endif %}
+      {% if cv.address %}<span class="contact-chip">⌂ {{ cv.address }}</span>{% endif %}
+      {% if cv.linkedin %}<span class="contact-chip">in {{ cv.linkedin }}</span>{% endif %}
+      {% if cv.github %}<span class="contact-chip">⌥ {{ cv.github }}</span>{% endif %}
+      {% if cv.website %}<span class="contact-chip">⊕ {{ cv.website }}</span>{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="main">
+    {% if cv.summary %}
+    <div class="section">
+      <div class="section-title">Qisqacha Ma'lumot</div>
+      <p class="summary-text">{{ cv.summary }}</p>
+    </div>
+    {% endif %}
+
+    {% if cv.experiences.all %}
+    <div class="section">
+      <div class="section-title">Ish Tajribasi</div>
+      {% for exp in cv.experiences.all %}
+      <div class="timeline-item">
+        <div class="item-title">{{ exp.position }}</div>
+        <div class="item-subtitle">{{ exp.company }}{% if exp.location %} · {{ exp.location }}{% endif %}</div>
+        <div class="item-date">{{ exp.start_date }} – {% if exp.is_current %}Hozir{% else %}{{ exp.end_date }}{% endif %}</div>
+        {% if exp.description %}<p class="item-desc">{{ exp.description }}</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if cv.educations.all %}
+    <div class="section">
+      <div class="section-title">Ta'lim</div>
+      {% for edu in cv.educations.all %}
+      <div class="timeline-item">
+        <div class="item-title">{{ edu.degree }}{% if edu.field %} · {{ edu.field }}{% endif %}</div>
+        <div class="item-subtitle">{{ edu.institution }}{% if edu.gpa %} · GPA: {{ edu.gpa }}{% endif %}</div>
+        <div class="item-date">{{ edu.start_date }} – {% if edu.is_current %}Hozir{% else %}{{ edu.end_date }}{% endif %}</div>
+        {% if edu.description %}<p class="item-desc">{{ edu.description }}</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="sidebar">
+    {% if cv.skills.all %}
+    <div class="section">
+      <div class="section-title">Ko'nikmalar</div>
+      {% for skill in cv.skills.all %}
+      <div class="skill-item">
+        <div class="skill-header"><span>{{ skill.name }}</span></div>
+        <div class="skill-dots">
+          {% for i in "12345" %}
+          <div class="dot {% if forloop.counter <= skill.level %}filled{% endif %}"></div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if cv.languages.all %}
+    <div class="section">
+      <div class="section-title">Tillar</div>
+      {% for lang in cv.languages.all %}
+      <div class="lang-item">
+        <div class="lang-name">{{ lang.name }}</div>
+        <div class="lang-level">{{ lang.level }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if cv.certificates.all %}
+    <div class="section">
+      <div class="section-title">Sertifikatlar</div>
+      {% for cert in cv.certificates.all %}
+      <div class="cert-item">
+        <div class="cert-name">{{ cert.name }}</div>
+        {% if cert.issuer or cert.date %}
+        <div class="cert-info">{% if cert.issuer %}{{ cert.issuer }}{% endif %}{% if cert.date %} · {{ cert.date }}{% endif %}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+</body>
+</html>
